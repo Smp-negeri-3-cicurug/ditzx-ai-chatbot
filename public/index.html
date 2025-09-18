@@ -136,6 +136,7 @@
       flex: 1;
       overflow-y: auto;
       padding: 1.5rem;
+      padding-bottom: 6rem; /* Padding tambahan agar konten tidak tertutup input */
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
@@ -210,7 +211,13 @@
       padding: 1.5rem;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       background-color: rgba(23, 27, 46, 0.9);
-      position: relative;
+      position: fixed; /* Jadikan posisi tetap */
+      bottom: 0; /* Letakkan di bagian bawah */
+      width: 100%; /* Lebar penuh */
+      max-width: 900px; /* Batasi lebar agar sesuai dengan container */
+      left: 50%; /* Pindahkan ke tengah */
+      transform: translateX(-50%); /* Geser ke kiri setengah lebar untuk menengahkan */
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
     }
     .chat-form {
       display: flex;
@@ -462,5 +469,4 @@
 </script>
 
 </body>
-                                     </html>
-  
+</html>
