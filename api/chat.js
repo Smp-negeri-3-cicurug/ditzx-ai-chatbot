@@ -7,12 +7,10 @@ export default async function handler(req) {
     let text, model;
 
     if (req.method === "POST") {
-      // Ambil dari body JSON
       const body = await req.json();
       text = body.text;
       model = body.model;
     } else {
-      // Fallback: ambil dari query param (kalau GET)
       const { searchParams } = new URL(req.url);
       text = searchParams.get("text");
       model = searchParams.get("model");
@@ -22,7 +20,6 @@ export default async function handler(req) {
       return new Response("Missing text or model", { status: 400 });
     }
 
-    // Panggil upstream API
     const upstreamUrl = `https://api-faa-skuarta2.vercel.app/faa/chatai?text=${encodeURIComponent(
       text
     )}&model=${model}`;
@@ -34,7 +31,10 @@ export default async function handler(req) {
     }
 
     const data = await response.json();
-    const result = data.result || "Maaf, tidak ada hasil.";
+
+    // Ambil string jawaban dari struktur JSON
+    let result =
+      data?.result?.response?.response || "Maaf, tidak ada hasil.";
 
     return new Response(result, {
       status: 200,
