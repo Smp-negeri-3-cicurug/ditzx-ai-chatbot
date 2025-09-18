@@ -1,18 +1,12 @@
 {
-  "name": "ai-chatbot",
+  "name": "ditzx-ai-chatbot",
   "version": "1.0.0",
-  "description": "Chatbot dengan backend Edge Runtime di Vercel",
-  "type": "module",
+  "private": true,
   "scripts": {
     "dev": "vercel dev",
-    "start": "vercel dev"
+    "start": "vercel dev",
+    "build": "echo 'No build needed'"
   },
-  "keywords": [
-    "chatbot",
-    "vercel",
-    "edge",
-    "ai"
-  ],
-  "author": "",
-  "license": "MIT"
+  "dependencies": {},
+  "devDependencies": {}
 }
