@@ -14,9 +14,12 @@ export default async function handler(req) {
   try {
     const upstreamUrl = `https://api-faa-skuarta2.vercel.app/faa/chatai?text=${encodeURIComponent(text)}&model=${model}`;
     const response = await fetch(upstreamUrl);
-    const data = await response.json();
 
-    // Ambil hanya hasilnya
+    if (!response.ok) {
+      throw new Error(`Upstream error: ${response.status}`);
+    }
+
+    const data = await response.json();
     const result = data.result || "Maaf, tidak ada hasil.";
 
     return new Response(result, {
