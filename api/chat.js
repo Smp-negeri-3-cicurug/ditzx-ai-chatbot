@@ -41,6 +41,7 @@ export default async function handler(req) {
       headers: { "Content-Type": "text/plain; charset=utf-8" },
     });
   } catch (err) {
+    console.error(err);
     return new Response("Internal server error", { status: 500 });
   }
-                        }
+}
