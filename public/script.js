@@ -117,7 +117,7 @@ const handleFormSubmit = async (e) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        text: userMessage,
+        messages: [...chatHistory, { role: "user", content: userMessage }],
         model: selectedModel
       })
     });
