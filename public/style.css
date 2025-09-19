@@ -1,0 +1,275 @@
+/* Reset dan Styling Dasar */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Inter', sans-serif;
+  height: 100vh;
+  min-height: 100vh;
+  color: #e0e6ed;
+  background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease;
+  overflow: hidden;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-width: 900px;
+  margin: 1.5rem auto;
+  width: 100%;
+  background-color: rgba(23, 27, 46, 0.7);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+/* Header */
+header {
+  background-color: rgba(23, 27, 46, 0.9);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  flex-shrink: 0;
+}
+.hamburger-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #e0e6ed;
+  padding-right: 1.5rem;
+  line-height: 1;
+  outline: none;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.hamburger-btn:hover {
+    transform: scale(1.1);
+    color: #6a89cc;
+}
+header h1 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
+  padding-right: 2.5rem;
+  color: #6a89cc;
+  transition: color 0.2s ease;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 280px;
+  height: 100%;
+  background-color: #161c28;
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.6);
+  transition: left 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  padding: 2rem 1.5rem;
+  z-index: 1000;
+  border-right: 1px solid #202a3a;
+}
+.sidebar.open {
+  left: 0;
+}
+.sidebar h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #e0e6ed;
+  border-bottom: 2px solid #6a89cc;
+  padding-bottom: 0.5rem;
+}
+.sidebar ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.sidebar button {
+  width: 100%;
+  text-align: left;
+  padding: 1rem 1.25rem;
+  background-color: #2b3445;
+  color: #e0e6ed;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  font-weight: 500;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+.sidebar button:hover {
+  background-color: #4a5568;
+  transform: translateX(8px);
+}
+.sidebar button i {
+  margin-right: 1rem;
+  width: 20px;
+  text-align: center;
+  color: #94a3b8;
+}
+
+/* Area Chat */
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  /* Penyesuaian: Tambahkan padding di bagian bawah */
+  padding-bottom: 70px; /* Nilai ini bisa disesuaikan */
+}
+.message-container {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+.message-container.user {
+    justify-content: flex-end;
+}
+.message-container.ai {
+    justify-content: flex-start;
+}
+.message-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #3b455c;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    color: #6a89cc;
+    flex-shrink: 0;
+}
+.message-icon.user {
+    background-color: #6a89cc;
+    color: #fff;
+}
+
+.chat-bubble {
+  padding: 1rem 1.5rem;
+  border-radius: 20px;
+  max-width: 80%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  line-height: 1.5;
+  position: relative;
+}
+.chat-bubble.user {
+  background-color: #6a89cc;
+  color: #fff;
+}
+.chat-bubble.ai {
+  background-color: #2b3445;
+  color: #e0e6ed;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.chat-bubble h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.5px;
+}
+.message-container.user .chat-bubble {
+    border-bottom-right-radius: 5px;
+}
+.message-container.ai .chat-bubble {
+    border-bottom-left-radius: 5px;
+}
+
+/* Footer & Form Input */
+footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(23, 27, 46, 0.9);
+  position: relative;
+  flex-shrink: 0;
+}
+.chat-form {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.chat-form input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border-radius: 9999px;
+  border: 1px solid #4a5568;
+  background-color: #202a3a;
+  color: #e0e6ed;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.chat-form input::placeholder {
+  color: #8c95a3;
+}
+.chat-form input:focus {
+  border-color: #6a89cc;
+  box-shadow: 0 0 0 3px rgba(106, 137, 204, 0.5);
+}
+.chat-form button {
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  background-color: #6a89cc;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+.chat-form button:hover {
+  background-color: #5773ba;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+.empty-state {
+  text-align: center;
+  color: #8c95a3;
+  font-size: 1.8rem;
+  margin: auto;
+  opacity: 0.8;
+  animation: fadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* Animasi */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes typing {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+.typing-indicator span {
+  animation: typing 1s infinite;
+  display: inline-block;
+  margin: 0 2px;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
