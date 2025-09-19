@@ -23,24 +23,32 @@ let selectedModel = availableModels[0].id;
 let selectedModelName = availableModels[0].name;
 let selectedModelIcon = availableModels[0].icon;
 let initialGreeting = true;
+let chatHistory = [];
 
-// === Helper untuk merapikan teks jawaban AI ===
-function formatAIResponse(text) {
-  if (!text || typeof text !== "string") return "";
-  let formatted = text.trim();
-  formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
-  formatted = formatted.replace(/\s+/g, " ");
-  if (!/[.!?]$/.test(formatted)) {
-    formatted += ".";
+// --- Fungsi simpan & load history ---
+const saveHistory = () => {
+  localStorage.setItem(`chatHistory-${selectedModel}`, JSON.stringify(chatHistory));
+};
+
+const loadHistory = () => {
+  const saved = localStorage.getItem(`chatHistory-${selectedModel}`);
+  if (saved) {
+    chatHistory = JSON.parse(saved);
+    emptyState.style.display = 'none';
+    initialGreeting = false;
+    chatHistory.forEach(msg => {
+      displayMessage(msg.role, msg.content, selectedModelName, false);
+    });
   }
-  return formatted;
-}
+};
 
+// Update judul header
 const updateHeaderTitle = () => {
   headerTitle.textContent = selectedModelName;
 };
 
-const displayMessage = (role, content, modelName) => {
+// Tampilkan pesan ke layar
+const displayMessage = (role, content, modelName, save = true) => {
   if (initialGreeting) {
     emptyState.style.display = 'none';
     initialGreeting = false;
@@ -69,20 +77,21 @@ const displayMessage = (role, content, modelName) => {
   }
   
   chatArea.appendChild(messageContainer);
+  chatArea.scrollTop = chatArea.scrollHeight;
 
-  // 🔥 Scroll otomatis smooth
-  chatArea.scrollTo({
-    top: chatArea.scrollHeight,
-    behavior: "smooth"
-  });
+  if (save) {
+    chatHistory.push({ role, content });
+    saveHistory();
+  }
 };
 
+// Kirim pesan
 const handleFormSubmit = async (e) => {
   e.preventDefault();
   const userMessage = chatInput.value.trim();
   if (!userMessage) return;
 
-  displayMessage('user', userMessage);
+  displayMessage('user', userMessage, selectedModelName);
   
   chatInput.value = '';
   chatInput.disabled = true;
@@ -101,7 +110,7 @@ const handleFormSubmit = async (e) => {
   loadingContainer.appendChild(loadingIcon);
   loadingContainer.appendChild(loadingBubble);
   chatArea.appendChild(loadingContainer);
-  chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: "smooth" });
+  chatArea.scrollTop = chatArea.scrollHeight;
   
   try {
     const response = await fetch(API_BASE_URL, {
@@ -118,10 +127,9 @@ const handleFormSubmit = async (e) => {
     }
 
     const aiResponse = await response.text();
-    const cleanResponse = formatAIResponse(aiResponse);
 
     chatArea.removeChild(loadingContainer);
-    displayMessage('ai', cleanResponse, selectedModelName);
+    displayMessage('ai', aiResponse, selectedModelName);
 
   } catch (error) {
     console.error('Error:', error);
@@ -133,26 +141,38 @@ const handleFormSubmit = async (e) => {
   }
 };
 
+// Pilih model AI
 const handleModelSelect = (e) => {
   const button = e.target.closest('button');
-  if (button) {
+  if (button && !button.classList.contains('clear-btn')) {
     const modelId = button.dataset.modelId;
     const modelData = availableModels.find(m => m.id === modelId);
     if (modelData) {
       selectedModel = modelData.id;
       selectedModelName = modelData.name;
       selectedModelIcon = modelData.icon;
+      chatArea.innerHTML = '';
+      chatHistory = [];
+      localStorage.removeItem(`chatHistory-${selectedModel}`);
+      initialGreeting = true;
+      emptyState.style.display = 'block';
       sidebar.classList.remove('open');
       updateHeaderTitle();
-
-      // 🔥 Reset chat kalau ganti model
-      chatArea.innerHTML = '';
-      emptyState.style.display = 'block';
-      initialGreeting = true;
+      loadHistory();
     }
   }
 };
 
+// Clear chat manual
+const clearChat = () => {
+  chatArea.innerHTML = '';
+  chatHistory = [];
+  localStorage.removeItem(`chatHistory-${selectedModel}`);
+  initialGreeting = true;
+  emptyState.style.display = 'block';
+};
+
+// Buat tombol model di sidebar
 availableModels.forEach(model => {
   const listItem = document.createElement('li');
   const button = document.createElement('button');
@@ -162,6 +182,15 @@ availableModels.forEach(model => {
   listItem.appendChild(button);
   modelList.appendChild(listItem);
 });
+
+// Tambahkan tombol Clear Chat di sidebar
+const clearItem = document.createElement('li');
+const clearBtn = document.createElement('button');
+clearBtn.className = 'clear-btn';
+clearBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Hapus Riwayat';
+clearBtn.addEventListener('click', clearChat);
+clearItem.appendChild(clearBtn);
+modelList.appendChild(clearItem);
 
 hamburgerBtn.addEventListener('click', () => {
   sidebar.classList.toggle('open');
@@ -176,3 +205,4 @@ document.addEventListener('click', (event) => {
 chatForm.addEventListener('submit', handleFormSubmit);
 
 updateHeaderTitle();
+loadHistory();
