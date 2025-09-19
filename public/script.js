@@ -24,6 +24,18 @@ let selectedModelName = availableModels[0].name;
 let selectedModelIcon = availableModels[0].icon;
 let initialGreeting = true;
 
+// === Helper untuk merapikan teks jawaban AI ===
+function formatAIResponse(text) {
+  if (!text || typeof text !== "string") return "";
+  let formatted = text.trim();
+  formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  formatted = formatted.replace(/\s+/g, " ");
+  if (!/[.!?]$/.test(formatted)) {
+    formatted += ".";
+  }
+  return formatted;
+}
+
 const updateHeaderTitle = () => {
   headerTitle.textContent = selectedModelName;
 };
@@ -57,7 +69,12 @@ const displayMessage = (role, content, modelName) => {
   }
   
   chatArea.appendChild(messageContainer);
-  chatArea.scrollTop = chatArea.scrollHeight;
+
+  // 🔥 Scroll otomatis smooth
+  chatArea.scrollTo({
+    top: chatArea.scrollHeight,
+    behavior: "smooth"
+  });
 };
 
 const handleFormSubmit = async (e) => {
@@ -84,7 +101,7 @@ const handleFormSubmit = async (e) => {
   loadingContainer.appendChild(loadingIcon);
   loadingContainer.appendChild(loadingBubble);
   chatArea.appendChild(loadingContainer);
-  chatArea.scrollTop = chatArea.scrollHeight;
+  chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: "smooth" });
   
   try {
     const response = await fetch(API_BASE_URL, {
@@ -101,9 +118,10 @@ const handleFormSubmit = async (e) => {
     }
 
     const aiResponse = await response.text();
+    const cleanResponse = formatAIResponse(aiResponse);
 
     chatArea.removeChild(loadingContainer);
-    displayMessage('ai', aiResponse, selectedModelName);
+    displayMessage('ai', cleanResponse, selectedModelName);
 
   } catch (error) {
     console.error('Error:', error);
@@ -126,6 +144,11 @@ const handleModelSelect = (e) => {
       selectedModelIcon = modelData.icon;
       sidebar.classList.remove('open');
       updateHeaderTitle();
+
+      // 🔥 Reset chat kalau ganti model
+      chatArea.innerHTML = '';
+      emptyState.style.display = 'block';
+      initialGreeting = true;
     }
   }
 };
