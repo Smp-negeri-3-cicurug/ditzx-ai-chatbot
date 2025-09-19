@@ -4,44 +4,39 @@ export const config = {
 
 export default async function handler(req) {
   try {
-    let text, model;
+    const body = await req.json();
+    const { messages, model } = body;
 
-    if (req.method === "POST") {
-      const body = await req.json();
-      text = body.text;
-      model = body.model;
-    } else {
-      const { searchParams } = new URL(req.url);
-      text = searchParams.get("text");
-      model = searchParams.get("model");
+    if (!messages || !Array.isArray(messages) || messages.length === 0 || !model) {
+      return new Response(
+        JSON.stringify({ status: false, error: "Missing messages or model" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
 
-    if (!text || !model) {
-      return new Response("Missing text or model", { status: 400 });
-    }
+    // Gabungkan riwayat percakapan
+    const prompt = messages.map(m => `${m.role}: ${m.content}`).join("\n");
 
-    const upstreamUrl = `https://api-faa-skuarta2.vercel.app/faa/chatai?text=${encodeURIComponent(
-      text
-    )}&model=${model}`;
-
+    const upstreamUrl = `https://api-faa-skuarta2.vercel.app/faa/chatai?text=${encodeURIComponent(prompt)}&model=${model}`;
     const response = await fetch(upstreamUrl);
-
-    if (!response.ok) {
-      throw new Error("Upstream API error");
-    }
-
     const data = await response.json();
 
-    // Ambil string jawaban dari struktur JSON
-    let result =
-      data?.result?.response?.response || "Maaf, tidak ada hasil.";
+    const result = data?.result?.response?.response || "Maaf, tidak ada hasil.";
 
-    return new Response(result, {
-      status: 200,
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
-    });
+    return new Response(
+      JSON.stringify({
+        status: true,
+        creator: "Faa",
+        model,
+        response: result,
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (err) {
     console.error(err);
-    return new Response("Internal server error", { status: 500 });
+    return new Response(
+      JSON.stringify({ status: false, error: "Internal server error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }
